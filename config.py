@@ -12,13 +12,7 @@ import streamlit as st
 load_dotenv()
 
 # Répertoires de base
-# Détecter si on est sur Streamlit Cloud
-IS_STREAMLIT_CLOUD = os.getenv('IS_STREAMLIT_SHARE', False)
-if IS_STREAMLIT_CLOUD:
-    BASE_DIR = Path("/mount/src/rag-assistant")
-else:
-    BASE_DIR = Path(__file__).parent
-
+BASE_DIR = Path(__file__).parent
 BOOKS_DIR = BASE_DIR / "livres"  # Dossier contenant les livres PDF
 
 # Configuration du modèle d'embeddings
@@ -32,23 +26,18 @@ PERSIST_DIRECTORY = "books_index"  # Dossier de persistance des embeddings
 CHUNK_SIZE = 600     # Taille des segments de texte (caractères)
 CHUNK_OVERLAP = 100  # Chevauchement entre segments (caractères)
 
-# Documentation des livres sources avec chemins relatifs
+# Documentation des livres sources
 BOOKS_MAP = {
-    "Harry Potter 1": "harry-potter-1-lecole-des-sorciers.pdf",     # Premier tome
-    "Harry Potter 2": "harry-potter-2-la-chambre-des-secrets.pdf",  # Deuxième tome
-    "Hunger Games": "CollinsSuzanne-HungerGames-1HungerGames2008.French.ebook_1 (1).pdf"
+    "Harry Potter 1": f"{BOOKS_DIR}/harry-potter-1-lecole-des-sorciers.pdf",     # Premier tome
+    "Harry Potter 2": f"{BOOKS_DIR}/harry-potter-2-la-chambre-des-secrets.pdf",  # Deuxième tome
+    "Hunger Games": f"{BOOKS_DIR}/CollinsSuzanne-HungerGames-1HungerGames2008.French.ebook_1 (1).pdf"
 }
 
-# Chemins complets des documents PDF
+# Chemins des documents PDF
 PDF_PATHS = [str(BOOKS_DIR / path) for path in BOOKS_MAP.values()]
 
-# Mapping pour l'affichage et la recherche
-BOOKS_DISPLAY = {
-    name: str(BOOKS_DIR / path)
-    for name, path in BOOKS_MAP.items()
-}
-
-FILES_TO_TITLES = {v: k for k, v in BOOKS_DISPLAY.items()}
+# Mapping inverse pour la recherche par nom de fichier
+FILES_TO_TITLES = {v: k for k, v in BOOKS_MAP.items()}
 
 # Configuration de l'API Gemini
 # Essayer d'abord les secrets Streamlit, puis les variables d'environnement
